@@ -69,6 +69,11 @@ if settings.RESET_USER_PASSWORD:
              name='password_reset_complete'),
     ]
 
+if hasattr(settings, 'SOCIALACCOUNT_PROVIDERS'):
+        urlpatterns += [
+            path('accounts/', include('allauth.urls'))
+        ]
+
 apiUrlpatterns = [
     url(r'^', include('client.apiurls')),
     url(r'^', include('core.apiurls'))

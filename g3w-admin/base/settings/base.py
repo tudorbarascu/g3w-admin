@@ -38,7 +38,12 @@ DJANGO_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.gis',
-    #'django.contrib.sites'
+    'django.contrib.sites',
+
+    # allatuh
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount'
 ]
 
 THIRD_PARTY_APPS = [
@@ -147,7 +152,8 @@ AUTH_PASSWORD_VALIDATORS = [
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
-    'guardian.backends.ObjectPermissionBackend'
+    'guardian.backends.ObjectPermissionBackend',
+    'allauth.account.auth_backends.AuthenticationBackend'
 )
 
 GUARDIAN_RAISE_403 = True

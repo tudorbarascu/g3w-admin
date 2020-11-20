@@ -2,6 +2,7 @@
 {% load staticfiles %}
 {% load i18n %}
 {% block custom_css_links_page %}
+{% load socialaccount %}
 <!-- iCheck -->
 <link rel="stylesheet" href="{% static "bower_components/icheck/skins/square/blue.css" %}">
 {% endblock %}
@@ -37,17 +38,26 @@
         <span class="glyphicon glyphicon-lock form-control-feedback"></span>
       </div>
       <div class="row">
-        <div class="col-xs-4">
-          <button type="submit" class="btn btn-primary btn-block btn-flat">{% trans 'Sign In' %}</button>
+        <div class="col-xs-12">
+          <button type="submit" class="btn btn-primary btn-block btn-social"><i class="fa fa-user"></i>{% trans 'Sign In' %}</button>
         </div><!-- /.col -->
       </div>
       {% if SETTINGS.RESET_USER_PASSWORD %}
-      <div class="row">
+      <div class="row" style="margin-top:20px;">
           <div class="col-xs-12">
               <a href="{% url 'password_reset' %}">{% trans 'Forgot your password?' %}</a>
           </div>
       </div>
       {% endif %}
+      {% if SETTINGS.SOCIALACCOUNT_PROVIDERS %}
+      <div class="row" style="margin-top:20px;">
+          <div class="col-xs-12">
+      {% for provider in SETTINGS.SOCIALACCOUNT_PROVIDERS %}
+          <a href="{% provider_login_url provider %}" class="btn btn-block btn-social btn-{{ provider }}"><i class="fa fa-{{ provider }}"></i>Login with {{ provider }}</a>
+      {% endfor %}
+          </div>
+      </div>
+       {% endif %}
     </form>
   </div><!-- /.login-box-body -->
  <div style="text-align: center; color: grey; margin-top: 10px"><i>{% trans ' Version' %} {{ VERSION }}</i></div>
