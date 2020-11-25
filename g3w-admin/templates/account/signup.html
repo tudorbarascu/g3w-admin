@@ -1,0 +1,51 @@
+{% extends "account/base.html" %}
+{% load i18n %}
+
+{% block login-box-body %}
+  {% if form.errors %}
+  <div class="alert alert-danger alert-dismissible">
+    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+    <h4><i class="icon fa fa-ban"></i> {% trans 'SIGNUP ERROR' %}!</h4>
+  </div>
+  {% endif %}
+ <h3>{% trans "Sign Up" %}</h3>
+
+<p>{% blocktrans %}Already have an account? Then please{% endblocktrans %} <a href="{% url 'login' %}">{% trans 'sign in' %}</a>.</p>
+<form id="signup-form" method="post">
+  {% csrf_token %}
+
+    <div class="form-group has-feedback">
+        <input type="text" class="form-control" required="" name="username" value="{% if form.username.value %}{{ form.username.value }}{% endif %}" placeholder="{{ form.username.label }}">
+        <span class="glyphicon glyphicon-user form-control-feedback"></span>
+    </div>
+    {% if form.username.errors %}
+        <span class="error" style="color: red">{{ form.username.errors }}</span>
+    {% endif %}
+    <div class="form-group has-feedback">
+        <input type="email" class="form-control" required="" name="email" value="{% if form.email.value %}{{ form.email.value }}{% endif %}" placeholder="{% trans 'Email address' %}">
+        <span class="glyphicon glyphicon-email form-control-feedback"></span>
+    </div>
+    {% if form.email.errors %}
+        <span class="error" style="color: red">{{ form.email.errors }}</span>
+    {% endif %}
+    <div class="form-group has-feedback">
+        <input type="password" class="form-control" required="" name="password1" value="{% if form.password1.value %}{{ form.password1.value }}{% endif %}" placeholder="Password">
+        <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+    </div>
+    {% if form.password1.errors %}
+        <span class="error" style="color: red">{{ form.password1.errors }}</span>
+    {% endif %}
+    <div class="form-group has-feedback">
+        <input type="password" class="form-control" required="" name="password2" value="{% if form.password2.value %}{{ form.password1.value }}{% endif %}" placeholder="Password (again)">
+        <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+    </div>
+    {% if form.password2.errors %}
+        <span class="error" style="color: red">{{ form.password2.errors }}</span>
+    {% endif %}
+  <div class="row">
+    <div class="col-xs-12">
+      <button type="submit" class="btn btn-primary btn-block btn-flat">{% trans 'Signup' %}</button>
+    </div><!-- /.col -->
+  </div>
+</form>
+{% endblock %}

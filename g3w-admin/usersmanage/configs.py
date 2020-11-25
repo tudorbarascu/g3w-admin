@@ -4,3 +4,4 @@ G3W_VIEWER1 = 'Viewer Level 1'
 G3W_VIEWER2 = 'Viewer Level 2'
 
 USER_BACKEND_DEFAULT = 'g3wsuite'
+USER_BACKEND_SOCIAL = 'social'

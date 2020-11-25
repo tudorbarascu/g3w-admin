@@ -293,6 +293,18 @@ G3WADMIN_VECTOR_LAYER_DOWNLOAD_FORMATS = ['shp', 'xls', 'csv']
 # Setting to activate/deactivate user password reset by email.
 RESET_USER_PASSWORD = False
 
+# Setting to activate/deactivate signup worflow
+USER_CAN_SIGNUP = False
+
+# Main role user can signup
+MAIN_ROLE_USER_CAN_SIGNUP = None
+
+# ALLAUTH SETTINGS
+# ----------------
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+ACCOUNT_EMAIL_SUBJECT_PREFIX = '[G3W-SUITE]'
+
 # QPLOTLY DEFAULT SETTINGS
 # ------------------------
 

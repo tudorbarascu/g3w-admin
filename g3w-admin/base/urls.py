@@ -2,13 +2,15 @@
 G3W-ADMIN URL Configuration
 """
 from django.conf.urls import url, include
-from django.urls import path
+from django.urls import path, re_path
 from django.contrib import admin, auth
 from django.conf import settings
 from django.conf.urls.static import static
 from django.conf.urls.i18n import i18n_patterns
 from django.views.i18n import JavaScriptCatalog
+from allauth.account import views as account_views
 from ajax_select import urls as ajax_select_urls
+from usersmanage.views import ConfirmEmailView
 
 import debug_toolbar
 
@@ -69,10 +71,50 @@ if settings.RESET_USER_PASSWORD:
              name='password_reset_complete'),
     ]
 
+# Add path/url for signup
+if settings.USER_CAN_SIGNUP:
+    urlpatterns += [
+        # for allauth module
+        url(r'^login/$',
+            auth.views.LoginView.as_view(template_name='login.html', extra_context=extra_context_login_page),
+            name='account_login'),
+        path("signup/", account_views.SignupView.as_view(extra_context=extra_context_login_page), name="account_signup"),
+        # E-mail
+        path("email/", account_views.email, name="account_email"),
+        path(
+            "confirm-email/",
+            account_views.EmailVerificationSentView.as_view(extra_context=extra_context_login_page),
+            name="account_email_verification_sent",
+        ),
+        re_path(
+            r"^confirm-email/(?P<key>[-:\w]+)/$",
+            ConfirmEmailView.as_view(extra_context=extra_context_login_page),
+            name="account_confirm_email",
+        )
+   ]
+
+
+from importlib import import_module
+from allauth.socialaccount import providers
+from allauth import app_settings
+
 if hasattr(settings, 'SOCIALACCOUNT_PROVIDERS'):
         urlpatterns += [
-            path('accounts/', include('allauth.urls'))
-        ]
+            #path('accounts/', include('allauth.urls')),
+            path("social/", include("allauth.socialaccount.urls"))
+       ]
+
+        # Provider urlpatterns, as separate attribute (for reusability).
+        provider_urlpatterns = []
+        for provider in providers.registry.get_list():
+            try:
+                prov_mod = import_module(provider.get_package() + ".urls")
+            except ImportError:
+                continue
+            prov_urlpatterns = getattr(prov_mod, "urlpatterns", None)
+            if prov_urlpatterns:
+                provider_urlpatterns += prov_urlpatterns
+        urlpatterns += provider_urlpatterns
 
 apiUrlpatterns = [
     url(r'^', include('client.apiurls')),

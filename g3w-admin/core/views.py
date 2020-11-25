@@ -354,3 +354,4 @@ class MacroGroupSetOrderView(G3WAjaxSetOrderViewMixin, View):
     @method_decorator(user_passes_test_or_403(lambda u: u.is_superuser))
     def dispatch(self, *args, **kwargs):
         return super(MacroGroupSetOrderView, self).dispatch(*args, **kwargs)
+

@@ -7,13 +7,14 @@ from django.views.generic import (
     View
 )
 from django.http.response import JsonResponse, Http404
-from django.views.generic.detail import SingleObjectMixin
+from django.views.generic.detail import SingleObjectMixin, ContextMixin
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.models import Group
 from guardian.shortcuts import assign_perm, get_objects_for_user
 from guardian.decorators import permission_required_or_403
+from allauth.account.views import ConfirmEmailView as AllauthConfirmEmailView
 from core.mixins.views import G3WRequestViewMixin, G3WAjaxDeleteViewMixin
 from .decorators import permission_required_by_backend_or_403
 from .utils import getUserGroups, get_user_groups
@@ -263,3 +264,12 @@ class UserGroupByUserRoleView(View):
                                                'selected': ug in current_user_groups} for ug in user_groups]})
 
 
+class ConfirmEmailView(AllauthConfirmEmailView):
+
+    extra_context = None
+
+    def get_context_data(self, **kwargs):
+        if self.extra_context is not None:
+            kwargs.update(self.extra_context)
+        ctx = super().get_context_data(**kwargs)
+        return ctx

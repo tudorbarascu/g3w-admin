@@ -49,7 +49,19 @@
           </div>
       </div>
       {% endif %}
+      {% if SETTINGS.USER_CAN_SIGNUP %}
+       <div class="row" style="margin-top:20px;">
+            <div class="col-xs-12">
+                <a href="{% url 'account_signup' %}">{% trans 'Signup' %}</a>
+            </div>
+        </div>
+      {% endif %}
       {% if SETTINGS.SOCIALACCOUNT_PROVIDERS %}
+      <div class="row" style="margin-top:20px;">
+        <div class="col-xs-12">
+            {% trans 'or login with' %}
+        </div>
+      </div>
       <div class="row" style="margin-top:20px;">
           <div class="col-xs-12">
       {% for provider in SETTINGS.SOCIALACCOUNT_PROVIDERS %}

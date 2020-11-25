@@ -14,16 +14,37 @@ __copyright__ = 'Copyright 2015 - 2020, Gis3w'
 from django.conf import settings
 from django.dispatch import receiver
 from allauth.socialaccount.signals import social_account_updated, social_account_added, pre_social_login
+from allauth.account.signals import user_signed_up
 from allauth.socialaccount.providers.base import AuthProcess
 from allauth.account.utils import perform_login, app_settings
 from usersmanage.models import Userbackend, Group as AuthGroup, User
-from usersmanage.configs import G3W_VIEWER1, G3W_EDITOR1, G3W_EDITOR2
+from usersmanage.configs import G3W_VIEWER1, G3W_EDITOR1, G3W_EDITOR2, USER_BACKEND_DEFAULT, USER_BACKEND_SOCIAL
+
+
+def set_user_backend(user, backend=USER_BACKEND_DEFAULT):
+    """Set user backend"""
+
+    if hasattr(user, 'userbackend'):
+        user.userbackend.backend = backend
+        user.userbackend.save()
+    else:
+        Userbackend(user=user, backend=backend).save()
 
 
 @receiver(social_account_updated)
+@receiver(user_signed_up)
 def add_backend2user(sender, **kwargs):
 
-    AuthGroup.objects.get(name=G3W_EDITOR1).user_set.add(kwargs['request'].user)
+    # user_signed_up signal
+    if 'user' in kwargs:
+        user = kwargs['user']
+        backend = USER_BACKEND_DEFAULT
+    else:
+        user = kwargs['request'].user
+        backend = USER_BACKEND_DEFAULT
+
+    AuthGroup.objects.get(name=G3W_EDITOR1).user_set.add(user)
+    set_user_backend(user, backend)
 
 
 @receiver(pre_social_login)
@@ -31,7 +52,7 @@ def test(sender, request, sociallogin, **kwargs):
 
     email_address = sociallogin.account.extra_data['email']
     users = User.objects.filter(email=email_address)
-    if users:
-        perform_login(request, users[0], email_verification=app_settings.EMAIL_VERIFICATION)
-        sociallogin.state["process"] = AuthProcess.CONNECT
+    if users and not sociallogin.is_existing:
+         perform_login(request, users[0], email_verification=app_settings.EMAIL_VERIFICATION)
+         sociallogin.state["process"] = AuthProcess.CONNECT
 
