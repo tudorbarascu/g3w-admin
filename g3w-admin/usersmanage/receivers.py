@@ -43,16 +43,24 @@ def add_backend2user(sender, **kwargs):
         user = kwargs['request'].user
         backend = USER_BACKEND_DEFAULT
 
-    AuthGroup.objects.get(name=G3W_EDITOR1).user_set.add(user)
-    set_user_backend(user, backend)
+    if not user.is_anonymous:
+        AuthGroup.objects.get(name=G3W_EDITOR1).user_set.add(user)
+        set_user_backend(user, backend)
 
+from allauth.exceptions import ImmediateHttpResponse
+from django.urls import reverse
+from django.http import HttpResponseRedirect
 
 @receiver(pre_social_login)
-def test(sender, request, sociallogin, **kwargs):
+def check_user(sender, request, sociallogin, **kwargs):
 
     email_address = sociallogin.account.extra_data['email']
     users = User.objects.filter(email=email_address)
     if users and not sociallogin.is_existing:
          perform_login(request, users[0], email_verification=app_settings.EMAIL_VERIFICATION)
          sociallogin.state["process"] = AuthProcess.CONNECT
+    else:
+        url = reverse("login")
+        ret = HttpResponseRedirect(url)
+        raise ImmediateHttpResponse(ret)
 
