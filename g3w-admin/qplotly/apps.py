@@ -9,3 +9,6 @@ class QplotlyConfig(AppConfig):
 
         # import signal handlers
         import qplotly.receivers
+
+        # Register Layout buy QGS_APPLICATION
+        from .utils import qplotly_layouts
