@@ -22,6 +22,7 @@ class Userdata(models.Model):
 
 USER_BACKEND_TYPES = G3WChoices(
         (USER_BACKEND_DEFAULT, 'G3WSUITE'),
+        ('oidc', 'OpenId Connect'),
     )
 
 
