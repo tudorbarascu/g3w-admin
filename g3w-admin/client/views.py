@@ -11,6 +11,7 @@ from django.contrib.auth.views import redirect_to_login
 from django.apps import apps
 from django.core.exceptions import PermissionDenied
 from rest_framework.renderers import JSONRenderer
+from guardian.core import ObjectPermissionChecker
 from base.version import get_version
 from core.api.serializers import GroupSerializer, Group
 from core.api.views import USERMEDIAHANDLER_CLASSES
@@ -60,17 +61,27 @@ class ClientView(TemplateView):
         except Project.DoesNotExist:
             raise Http404('Map not found')
 
-        grant_users = get_users_for_object(self.project, "view_project", with_group_users=True)
+        self.opc = ObjectPermissionChecker(request.user)
+        if self.opc.has_perm("view_project", self.project):
+            return super(ClientView, self).dispatch(request, *args, **kwargs)
 
-        anonymous_user = get_user_model().get_anonymous()
+        # redirect to login if Anonymous user
+        if request.user.is_anonymous:
+            return redirect_to_login(request.get_full_path(), settings.LOGIN_URL, 'next')
+        else:
+            raise PermissionDenied()
 
-        if request.user not in grant_users and anonymous_user not in grant_users and not request.user.is_superuser:
+        # grant_users = get_users_for_object(self.project, "view_project", with_group_users=True)
+        #
+        # anonymous_user = get_user_model().get_anonymous()
 
-            # redirect to login if Anonymous user
-            if request.user.is_anonymous:
-                return redirect_to_login(request.get_full_path(), settings.LOGIN_URL, 'next')
-            else:
-                raise PermissionDenied()
+        # if request.user not in grant_users and anonymous_user not in grant_users and not request.user.is_superuser:
+        #
+        #     # redirect to login if Anonymous user
+        #     if request.user.is_anonymous:
+        #         return redirect_to_login(request.get_full_path(), settings.LOGIN_URL, 'next')
+        #     else:
+        #         raise PermissionDenied()
 
         return super(ClientView, self).dispatch(request, *args, **kwargs)
 
@@ -117,11 +128,14 @@ class ClientView(TemplateView):
         u = self.request.user
 
         # admin_url
-        change_grant_users = get_users_for_object(self.project, "change_project", with_group_users=True)
-        if u in change_grant_users or u.is_superuser:
-            admin_url = reverse('home')
-        else:
-            admin_url = None
+        # change_grant_users = get_users_for_object(self.project, "change_project", with_group_users=True)
+        # if u in change_grant_users or u.is_superuser:
+        #     admin_url = reverse('home')
+        # else:
+        #     admin_url = None
+
+        admin_url = reverse('home') if self.opc.has_perm("change_project", self.project) else None
+
 
         user_data = {
             'i18n': get_language(),
