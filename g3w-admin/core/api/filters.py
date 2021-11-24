@@ -20,6 +20,8 @@ from qgis.core import (
 from rest_framework.exceptions import ParseError
 from urllib.parse import unquote
 
+import json
+
 
 class BaseFilterBackend():
     """Base class for QGIS request filters"""
@@ -56,7 +58,7 @@ class BaseFilterBackend():
         exclude_fields = []
 
         if view is not None and view.layer.exclude_attribute_wms:
-            exclude_fields = eval(view.layer.exclude_attribute_wms)
+            exclude_fields = json.loads(view.layer.exclude_attribute_wms)
 
         return field_name not in exclude_fields and field_name in qgis_layer.fields().names()
 

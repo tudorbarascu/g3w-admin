@@ -352,7 +352,7 @@ class QgisProjectLayer(XmlData):
                 )
         except:
             pass
-        return ret
+        return json.dumps(ret)
 
     def _getDataCapabilities(self):
         return 1
@@ -557,7 +557,7 @@ class QgisProjectLayer(XmlData):
 
             edittype_columns[field.name()] = data
 
-        return edittype_columns
+        return json.dumps(edittype_columns)
 
     def _getDataEditorlayout(self):
         """
@@ -870,12 +870,12 @@ class QgisProject(XmlData):
         :rtype: dict
         """
         extent = self.intialExtent
-        return {
+        return json.dumps({
             'xmin': extent.xMinimum(),
             'ymin': extent.yMinimum(),
             'xmax': extent.xMaximum(),
             'ymax': extent.yMaximum(),
-        }
+        })
 
     def _getDataMaxExtent(self):
         """
@@ -885,12 +885,12 @@ class QgisProject(XmlData):
         """
         wmsExtent = QgsServerProjectUtils.wmsExtent(self.qgs_project)
         if wmsExtent is not wmsExtent.isNull() and wmsExtent != QgsRectangle():
-            return {
+            return json.dumps({
                 'xmin': wmsExtent.xMinimum(),
                 'ymin': wmsExtent.yMinimum(),
                 'xmax': wmsExtent.xMaximum(),
                 'ymax': wmsExtent.yMaximum()
-            }
+            })
         else:
             return None
 
@@ -940,7 +940,8 @@ class QgisProject(XmlData):
         :rtype: dict
         """
 
-        return buildLayerTreeNodeObject(self.qgs_project.layerTreeRoot())
+        #return buildLayerTreeNodeObject(self.qgs_project.layerTreeRoot())
+        return json.dumps(buildLayerTreeNodeObject(self.qgs_project.layerTreeRoot()))
 
     def _getDataLayers(self):
         """
@@ -992,7 +993,7 @@ class QgisProject(XmlData):
             })
 
             layer_realtions.append(attrib)
-        return layer_realtions
+        return json.dumps(layer_realtions)
 
     def _getDataLayouts(self):
         """

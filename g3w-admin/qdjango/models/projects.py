@@ -26,6 +26,8 @@ from usersmanage.configs import *
 from usersmanage.utils import (get_groups_for_object, get_users_for_object,
                                getUserGroups, setPermissionUserObject)
 
+import json
+
 logger = logging.getLogger(__name__)
 
 # Layer type with widget set capability
@@ -352,7 +354,7 @@ class Project(G3WProjectMixins, G3WACLModelMixins, TimeStampedModel):
         _layers = {l[2]: l for l in layers}
 
         layers_tree = []
-        for l in eval(self.layers_tree):
+        for l in json.loads(self.layers_tree):
             layers_tree.append(readLeaf(l, _layers))
 
         return layers_tree
@@ -792,7 +794,7 @@ class Layer(G3WACLModelMixins, models.Model):
         )
 
     def database_columns_by_name(self):
-        return {db_col['name']: db_col for db_col in eval(self.database_columns)}
+        return {db_col['name']: db_col for db_col in json.loads(self.database_columns)}
 
     def getWidgetsNumber(self):
         """

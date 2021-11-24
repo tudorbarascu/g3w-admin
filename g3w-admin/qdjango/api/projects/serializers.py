@@ -49,7 +49,7 @@ class ProjectSerializer(G3WRequestSerializer, serializers.ModelSerializer):
         :param instance: qdjango  Project model instance.
         :return: dict
         """
-        return eval(instance.layers_tree)
+        return json.loads(instance.layers_tree)
 
     def get_map_extent(self, instance):
         """
@@ -706,7 +706,7 @@ class WidgetSerializer(serializers.ModelSerializer):
 
 
         # get edittype
-        edittypes = eval(self.layer.edittypes)
+        edittypes = json.loads(self.layer.edittypes)
 
         if ret['type'] == 'search':
             body = json.loads(instance.body)

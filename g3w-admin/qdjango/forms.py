@@ -30,6 +30,8 @@ from .models import *
 from .utils.data import QgisProject
 from .utils.validators import ProjectExists
 
+import json
+
 
 class QdjangoProjectFormMixin(object):
     """
@@ -96,9 +98,9 @@ class QdjangoProjectFormMixin(object):
         """ Check if init_map_extent is less bigger than max_extent """
 
         if hasattr(self, 'qgisProject'):
-            initext = QgsRectangle(*self.qgisProject.initialExtent.values())
+            initext = QgsRectangle(*json.loads(self.qgisProject.initialExtent).values())
             maxext = QgsRectangle(
-                *self.qgisProject.maxExtent.values()) if self.qgisProject.maxExtent else None
+                *json.loads(self.qgisProject.maxExtent).values()) if self.qgisProject.maxExtent else None
             if self.cleaned_data['use_map_extent_as_init_extent'] and maxext:
                 if not maxext.contains(initext):
                     raise ValidationError(

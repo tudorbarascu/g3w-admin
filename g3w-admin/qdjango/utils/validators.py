@@ -33,6 +33,7 @@ from qgis.core import (
 
 from qgis.PyQt.QtCore import QVariant, Qt
 
+import json
 
 def feature_validator(feature, layer):
     """Validate a QGIS feature by checking QGIS fields constraints
@@ -264,7 +265,7 @@ class CheckMaxExtent(QgisProjectValidator):
     """
 
     def clean(self):
-        max_extent = self.qgisProject.maxExtent
+        max_extent = json.loads(self.qgisProject.maxExtent)
 
         if max_extent:
 

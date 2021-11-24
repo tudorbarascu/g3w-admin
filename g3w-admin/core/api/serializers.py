@@ -13,6 +13,8 @@ from core.mixins.api.serializers import G3WRequestSerializer
 from qgis.core import QgsCoordinateReferenceSystem
 from copy import copy
 
+import json
+
 
 def update_serializer_data(serializer_data, data):
     """

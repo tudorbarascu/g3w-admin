@@ -8,6 +8,9 @@ import copy
 from qgis.core import QgsFieldConstraints, Qgis, QgsExpression, QgsExpressionNode
 from qgis.PyQt.QtCore import QVariant, QDate, QDateTime
 
+import json
+
+
 # relations data type
 RELATIONS_ONE_TO_ONE = 'ONE'
 RELATIONS_ONE_TO_MANY = 'MANY'
@@ -143,7 +146,7 @@ def mapLayerAttributes(layer, formField=False, **kwargs):
 
     mappingData = FIELD_TYPES_MAPPING
 
-    fields = eval(layer.database_columns) if layer.database_columns else None
+    fields = json.loads(layer.database_columns) if layer.database_columns else None
     fieldsMapped = copy.deepcopy(fields)
 
     # exclude if set:

@@ -74,11 +74,11 @@ class QGISLayerVectorViewMixin(object):
 
         # get relations on project
         self.relations = {} if not self.layer.project.relations else \
-            {r['id']: r for r in eval(self.layer.project.relations)}
+            {r['id']: r for r in json.loads(self.layer.project.relations)}
 
         # get relations on layer
         if self.layer.vectorjoins:
-            joins = eval(self.layer.vectorjoins)
+            joins = json.loads(self.layer.vectorjoins)
             for n, join in enumerate(joins):
                 try:
                     self._layer_model.objects.get(qgs_layer_id=join['joinLayerId'], project=self.layer.project)
@@ -236,7 +236,7 @@ class LayerVectorView(QGISLayerVectorViewMixin, BaseVectorOnModelApiView):
         if hasattr(self.layer, 'edittypes') and self.layer.edittypes:
 
             # reduild edittypes
-            edittypes = eval(self.layer.edittypes)
+            edittypes = json.loads(self.layer.edittypes)
             allow_edittypes = list(MAPPING_EDITTYPE_QGISEDITTYPE.keys())
 
             for field, data in list(edittypes.items()):

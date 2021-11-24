@@ -209,7 +209,7 @@ class QdjangoLayersListView(G3WRequestViewMixin, G3WGroupViewMixin, QdjangoProje
         qlayers = self.get_queryset()
         layers = {l.qgs_layer_id: l for l in qlayers}
 
-        layersTree = eval(project.layers_tree)
+        layersTree = json.loads(project.layers_tree)
         layersTreeBoostrap = []
 
         def buildLeaf(layer):
@@ -336,7 +336,7 @@ class QdjangoLayerWidgetsMixin(object):
         toret = []
 
         if layer.project.relations:
-            relations = eval(layer.project.relations)
+            relations = json.loads(layer.project.relations)
             for relation in relations:
                 if relation['referencingLayer'] == layer.qgs_layer_id:
                     toret.append(relation)
